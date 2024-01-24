@@ -1,7 +1,8 @@
 {
   description = "fpga_tools";
   inputs = {
-    nixpkgs.url = github:NixOS/nixpkgs/85f1ba3e51676fa8cc604a3d863d729026a6b8eb;
+    # nixpkgs.url = github:NixOS/nixpkgs/85f1ba3e51676fa8cc604a3d863d729026a6b8eb;
+    nixpkgs.url = github:NixOS/nixpkgs/23.11;
   };
 
   outputs = { self, nixpkgs }:
@@ -9,9 +10,12 @@
         pkgs = import nixpkgs {
           inherit system;
         };
+        python = pkgs.python3.withPackages (ps: with ps; [
+          apycula
+        ]);
         buildInputs = (with pkgs; [
           # fpga
-          yosys nextpnr
+          yosys nextpnr python openfpgaloader
         ]);
     in
   {
@@ -29,7 +33,7 @@
       pkgs.mkShell {
         packages = buildInputs;
         shellHook = ''
-          echo fpga_tools/flake.nix
+          PS1="(fpga_tools) \u@\h:\w\$ "
         '';          
       };
   };
