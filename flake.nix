@@ -15,14 +15,14 @@
         ]);
         buildInputs = (with pkgs; [
           # fpga
-          yosys nextpnr python openfpgaloader
+          yosys nextpnr python openfpgaloader fusesoc
         ]);
     in
   {
     # Old hack to collect buildInputs in env vars.
     packages.${system}.default =
       pkgs.stdenv.mkDerivation {
-        name = "exo-dev";
+        name = "fpga_tools";
         src = self;
         inherit buildInputs;
         builder = ./builder.sh;

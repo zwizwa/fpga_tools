@@ -1,0 +1,221 @@
+Examples and wrappers for FPGA development using YosysHQ open source tools.
+
+
+
+Entry: fpga tools
+Date: Wed Jan 24 06:44:40 AM EST 2024
+
+https://github.com/YosysHQ/nextpnr
+has a shell.nix
+
+That's good news.  Means yosyshq is using it
+It's on top of 23.05
+
+nix-shell works in that directory.
+
+I need to decide where to put it next.
+
+Looking for some examples.
+
+https://wiki.sipeed.com/hardware/en/tang/tang-nano-20k/example/led.html
+This talks about "installing IDE"
+So find another pointer.
+
+
+https://learn.lushaylabs.com/getting-setup-with-the-tang-nano-9k/
+so what is Lushay Labs?
+"FPGA Development Made Accessible"
+VS Code extension?
+It uses oss-cad-suite, which is a binary release
+
+Alright I got it working from example:
+https://www.geeklan.co.uk/?p=2919
+
+Schematic:
+https://dl.sipeed.com/shareURL/TANG/Nano%209K/2_Schematic
+
+SPI flash is PUYA P25Q32U
+https://puyasemi.com/uploadfiles/2021/12/202112201150575057.pdf
+
+Quad SPI
+What is QPI?
+
+
+
+Entry: Blinky up on Tang Nano 9K
+Date: Thu Jan 25 07:39:59 AM EST 2024
+
+Now what?
+
+I read some docs yesterday.
+
+What is new for me is the on-board 64Mbit of PSRAM and the DSP blocks.
+Maybe do something with those?
+
+Things I would like to do:
+- Some control CPU thing
+- Basic framework for anything-to-ethernet
+- Strategy for companion uC
+- SERV running from PSRAM
+- Delta1010 driver
+- Eurorack Audio + CV using Sigma-Delta modulation
+
+Maybe focus on things that do not need too much external electronics
+at first.
+
+Also, let's stick to plain Verilog.  Get a better feel for it.  Then
+later figure out how to redo the Seq thing.  That is mostly
+independent.
+
+But let's be honest.  I don't think I can really steer this very well.
+Ideas are going to come up that contradict previous ideas and this
+whole thing is just going to flow, or crash somewhere.
+
+
+Entry: Seq
+Date: Thu Jan 25 07:46:55 AM EST 2024
+
+One piece of low hanging fruit is to convert the asm_tools Haskell
+setup to a flake.
+
+EDIT: Got stuck immediately on a flake thing.  It seems to require a
+deep dive which I am resenting atm.
+
+I need something simpler.
+
+
+Entry: RISC-V
+Date: Thu Jan 25 08:03:22 AM EST 2024
+
+The website contains a PicoRV32 example.  Maybe best to start there?
+
+https://wiki.sipeed.com/hardware/en/tang/Tang-Nano-9K/examples/picorv.html
+
+https://www.cnx-software.com/2022/01/17/tang-nano-9k-fpga-board-can-emulate-picorv32-risc-v-soft-core-with-all-peripherals/
+
+Now in that last one, it says there is an ARM Cortex-M3 hard core.
+I don't think that's correct.  I would have seen it in the datasheet.
+
+
+Entry: GW1NSR-4C with Cortex M3
+Date: Thu Jan 25 08:12:59 AM EST 2024
+
+https://www.eevblog.com/forum/fpga/gowin-any-faster-way-to-re-program-the-embedded-cortex-m3/
+
+That mentions that GW1NSR4C has a Cortex-M3.
+
+https://www.gowinsemi.com/en/product/detail/59/
+
+The Nano 9K has the GW1NR-LV9QN88PC6/15 
+
+So this is GW1NSR-4C vs GW1NR
+
+Possble board:
+https://www.aliexpress.us/item/3256805447011016.html
+T-FPGA ESP32-S3 FPGA GW1NSR Low Power Microcontroller Development Board
+
+
+
+Entry: Make it easy to emulate
+Date: Thu Jan 25 08:19:10 AM EST 2024
+
+One reason to not use verilog is to tune the base language to
+something that can be emulated easily on a PC.
+
+
+Entry: next
+Date: Thu Jan 25 08:23:18 AM EST 2024
+
+Stuck at picking direction.
+
+
+Entry: next
+Date: Fri Jan 26 09:45:44 AM EST 2024
+
+Let's put a goal forward.
+
+I am going to need a general purpose management processor.
+SERV is probably enough.
+If core is soft, code can be assembly.
+
+Also, I want to figure out how to reuse more and do standard things,
+so RISC-V, FuseSOC, AXI bus, AXI4 streams.
+
+And I want to do just Verilog simulation, so verilator.
+
+All of this is software.
+
+
+Entry: can mister fpga run using open source tools?
+Date: Fri Jan 26 08:19:01 PM EST 2024
+
+The MSX1 core is .vhd
+It seems to be a mix
+https://github.com/orgs/MiSTer-devel/repositories
+
+
+Entry: f4fpga
+Date: Fri Jan 26 09:06:29 PM EST 2024
+
+How doe sthis tie in?
+
+https://f4pga.org/
+
+https://f4pga.readthedocs.io/en/latest/status.html
+
+
+Entry: open source archs
+Date: Fri Jan 26 09:10:17 PM EST 2024
+
+lattice
+gowin
+quicklogic
+
+xilinx7 xc7a35t/xc7a50t
+
+
+Entry: goals
+Date: Fri Jan 26 09:13:35 PM EST 2024
+
+Still mostly trying to learn.
+
+What do I have?
+- EPC5 with ethernet (colorsource par)
+- EPC5 official dev board with pi + arduino footprints
+- EOS with arm
+- ice40 hx8
+- tang nano 9k
+
+That is really enough.
+
+
+
+Entry: fpga bootstrap plan
+Date: Sat Jan 27 06:10:42 AM EST 2024
+
+Maybe it is a good thing that this is mostly going to be software.
+So what to start with?
+
+I think SRAM / PRAM is going to be the important bit.
+
+What about starting with the PRAM code?
+
+Or even simpler: first thing I need is a way to talk to the chip,
+which would be UART in the case of the 9K board.
+
+Once UART is working, I need a command language.
+
+
+
+Entry: MiSTeX
+Date: Wed Jan 31 05:48:36 PM EST 2024
+
+https://github.com/MiSTeX-devel/MiSTeX-ports/tree/main/cores
+https://mastodon.social/tags/MiSTeX
+
+Xylinx port
+
+Would be interesting because no special board is needed that is not
+supported by the open tools.
+
+https://www.reddit.com/r/FPGA/comments/12s2gnk/interview_with_mistex_creator_framework_for/
